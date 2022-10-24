@@ -6,6 +6,8 @@ import com.api.sondamarte.repositories.PlanetRepository;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PlanetService {
@@ -20,8 +22,20 @@ public class PlanetService {
         return new PlanetModel(planetDto.getName(), planetDto.getSizeX(), planetDto.getSizeY());
     }
 
+    public int planetTotalSize(PlanetModel planetModel){
+        return planetModel.getSizeX() * planetModel.getSizeY();
+    }
+
     @Transactional
     public PlanetModel save(PlanetModel planetModel){
         return planetRepository.save(planetModel);
+    }
+
+    public List<PlanetModel> findAll() {
+        return planetRepository.findAll();
+    }
+
+    public Optional<PlanetModel> findByName(String name) {
+        return planetRepository.findByName(name);
     }
 }
