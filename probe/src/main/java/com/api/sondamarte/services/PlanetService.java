@@ -38,4 +38,9 @@ public class PlanetService {
     public Optional<PlanetModel> findByName(String name) {
         return planetRepository.findByName(name);
     }
+
+    @Transactional
+    public void delete(PlanetModel planetModel) {
+        planetRepository.deleteByName(planetModel.getName());
+    }
 }

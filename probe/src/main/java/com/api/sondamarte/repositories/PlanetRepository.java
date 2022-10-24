@@ -12,4 +12,6 @@ import java.util.UUID;
 public interface PlanetRepository extends JpaRepository<PlanetModel, UUID> {
 
     Optional<PlanetModel> findByName(String name);
+
+    void deleteByName(String name);
 }

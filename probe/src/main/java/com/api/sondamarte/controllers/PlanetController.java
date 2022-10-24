@@ -42,4 +42,14 @@ public class PlanetController {
         }
         return ResponseEntity.status(HttpStatus.OK).body(planetModelOptional.get());
     }
+
+    @DeleteMapping("/{name}")
+    public ResponseEntity<Object> deletePlanetByName(@PathVariable(value = "name") String name){
+        Optional<PlanetModel> planetModelOptional = planetService.findByName(name);
+        if (planetModelOptional.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Planet not found.");
+        }
+        planetService.delete(planetModelOptional.get());
+        return ResponseEntity.status(HttpStatus.OK).body(planetModelOptional.get());
+    }
 }
