@@ -30,11 +30,7 @@ public class ProbeController {
 
     @GetMapping("/{name}")
     public ResponseEntity<Object> getProbeByName(@PathVariable(value = "name") String name){
-        Optional<ProbeModel> probeModelOptional = probeService.findByName(name);
-        if (probeModelOptional.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Probe not found.");
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(probeModelOptional.get());
+        return ResponseEntity.status(HttpStatus.OK).body(probeService.findByName(name));
     }
 
     @GetMapping
@@ -45,5 +41,10 @@ public class ProbeController {
     @DeleteMapping
     public ResponseEntity<Object> deleteAllProbes(){
         return ResponseEntity.status(HttpStatus.OK).body(probeService.deleteAll());
+    }
+    @DeleteMapping("/{name}")
+    public ResponseEntity<Object> deleteProbeByName(@PathVariable(value = "name") String name){
+        // if se tudo estiver ok
+        return ResponseEntity.status(HttpStatus.OK).body(probeService.deleteByName(name));
     }
 }

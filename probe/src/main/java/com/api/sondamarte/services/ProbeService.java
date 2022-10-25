@@ -3,7 +3,10 @@ package com.api.sondamarte.services;
 import com.api.sondamarte.dtos.ProbeDto;
 import com.api.sondamarte.models.PlanetModel;
 import com.api.sondamarte.models.ProbeModel;
+import com.api.sondamarte.repositories.PlanetRepository;
 import com.api.sondamarte.repositories.ProbeRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -14,16 +17,16 @@ import java.util.Optional;
 public class ProbeService {
 
     ProbeRepository probeRepository;
+    PlanetRepository planetRepository;
 
-    private final PlanetService planetService;
 
-    public ProbeService(ProbeRepository probeRepository, PlanetService planetService) {
+    public ProbeService(ProbeRepository probeRepository, PlanetRepository planetRepository) {
         this.probeRepository = probeRepository;
-        this.planetService = planetService;
+        this.planetRepository = planetRepository;
     }
 
     public ProbeModel createProbe(ProbeDto probeDto){
-        Optional<PlanetModel> planetName = planetService.findByName(probeDto.getPlanetName());
+        Optional<PlanetModel> planetName = planetRepository.findByName(probeDto.getPlanetName());
         // TODO validar se a sonda tem o nome do planeta
         return new ProbeModel(
                 probeDto.getName(),
@@ -42,8 +45,12 @@ public class ProbeService {
     public List<ProbeModel> findAll() {
         return probeRepository.findAll();
     }
-    public Optional<ProbeModel> findByName(String name) {
-        return probeRepository.findByName(name);
+    public ResponseEntity<Object> findByName(String name) {
+        Optional<ProbeModel> probeModelOptional = probeRepository.findByName(name);
+        if (probeModelOptional.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Probe not found.");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(probeModelOptional.get());
     }
 
     @Transactional
@@ -53,5 +60,13 @@ public class ProbeService {
             probeRepository.deleteByName(probe.getName());
         }
         return probes;
+    }
+
+    public ResponseEntity<Object> deleteByName(String name) {
+        Optional<ProbeModel> probe = probeRepository.findByName(name);
+        if (probe.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Probe not found.");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(probe.get());
     }
 }
