@@ -27,18 +27,6 @@ public class PlanetModel {
 
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setSizeX(int sizeX) {
-        this.sizeX = sizeX;
-    }
-
-    public void setSizeY(int sizeY) {
-        this.sizeY = sizeY;
-    }
-
     public String getName() {
         return name;
     }

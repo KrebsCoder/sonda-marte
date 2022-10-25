@@ -23,7 +23,7 @@ public class PlanetController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> registerPlanet(@RequestBody @Valid PlanetDto planetDto){
+    public ResponseEntity<Object> createPlanet(@RequestBody @Valid PlanetDto planetDto){
         return ResponseEntity.status(HttpStatus.CREATED).body(planetService.save(planetService.createPlanet(planetDto)));
     }
 
@@ -43,6 +43,11 @@ public class PlanetController {
         return ResponseEntity.status(HttpStatus.OK).body(planetModelOptional.get());
     }
 
+    @DeleteMapping
+    public ResponseEntity deleteAllPlanets(){
+        return ResponseEntity.status(HttpStatus.OK).body(planetService.deleteAll());
+    }
+
     @DeleteMapping("/{name}")
     public ResponseEntity<Object> deletePlanetByName(@PathVariable(value = "name") String name){
         Optional<PlanetModel> planetModelOptional = planetService.findByName(name);
@@ -52,4 +57,6 @@ public class PlanetController {
         planetService.delete(planetModelOptional.get());
         return ResponseEntity.status(HttpStatus.OK).body(planetModelOptional.get());
     }
+
+    // TODO: still needs to add put method to modify the planet name
 }

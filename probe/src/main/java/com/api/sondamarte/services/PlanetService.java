@@ -43,4 +43,13 @@ public class PlanetService {
     public void delete(PlanetModel planetModel) {
         planetRepository.deleteByName(planetModel.getName());
     }
+
+    @Transactional
+    public List<PlanetModel> deleteAll() {
+        List<PlanetModel> Planets = findAll();
+        for (PlanetModel planet : Planets){
+            planetRepository.deleteByName(planet.getName());
+        }
+        return Planets;
+    }
 }
