@@ -3,6 +3,8 @@ package com.api.sondamarte.services;
 import com.api.sondamarte.dtos.PlanetDto;
 import com.api.sondamarte.models.PlanetModel;
 import com.api.sondamarte.repositories.PlanetRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -31,12 +33,24 @@ public class PlanetService {
         return planetRepository.save(planetModel);
     }
 
-    public List<PlanetModel> findAll() {
-        return planetRepository.findAll();
+    public ResponseEntity<Object> findAll() {
+        int i = 0;
+        Optional<List<PlanetModel>> planetModelOptional = Optional.of(planetRepository.findAll());
+        for (PlanetModel planetModel : planetModelOptional.get()){
+            i++;
+        }
+        if (i == 0){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Planet not found.");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(planetModelOptional.get());
     }
 
-    public Optional<PlanetModel> findByName(String name) {
-        return planetRepository.findByName(name);
+    public ResponseEntity<Object> findByName(String name) {
+        Optional<PlanetModel> planetModelOptional = planetRepository.findByName(name);
+        if (planetModelOptional.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Planet not found.");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(planetModelOptional.get());
     }
 
     @Transactional
@@ -46,10 +60,19 @@ public class PlanetService {
 
     @Transactional
     public List<PlanetModel> deleteAll() {
-        List<PlanetModel> Planets = findAll();
+        List<PlanetModel> Planets = planetRepository.findAll();
         for (PlanetModel planet : Planets){
             planetRepository.deleteByName(planet.getName());
         }
         return Planets;
+    }
+
+    public ResponseEntity<Object> deleteByName(String name) {
+        Optional<PlanetModel> planetModelOptional = planetRepository.findByName(name);
+        if (planetModelOptional.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Planet not found.");
+        }
+        planetRepository.delete(planetModelOptional.get());
+        return ResponseEntity.status(HttpStatus.OK).body("All planets were deleted.");
     }
 }
