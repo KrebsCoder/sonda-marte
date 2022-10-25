@@ -12,4 +12,6 @@ import java.util.UUID;
 public interface ProbeRepository extends JpaRepository<ProbeModel, UUID> {
 
     Optional<ProbeModel> findByName(String name);
+
+    void deleteByName(String name);
 }

@@ -45,4 +45,13 @@ public class ProbeService {
     public Optional<ProbeModel> findByName(String name) {
         return probeRepository.findByName(name);
     }
+
+    @Transactional
+    public List<ProbeModel> deleteAll() {
+        List<ProbeModel> probes = findAll();
+        for (ProbeModel probe : probes){
+            probeRepository.deleteByName(probe.getName());
+        }
+        return probes;
+    }
 }

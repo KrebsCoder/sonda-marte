@@ -41,4 +41,9 @@ public class ProbeController {
     public ResponseEntity<Object> getAllProbes(){
         return ResponseEntity.status(HttpStatus.OK).body(probeService.findAll());
     }
+
+    @DeleteMapping
+    public ResponseEntity<Object> deleteAllProbes(){
+        return ResponseEntity.status(HttpStatus.OK).body(probeService.deleteAll());
+    }
 }
