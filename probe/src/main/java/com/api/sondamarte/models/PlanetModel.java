@@ -46,13 +46,25 @@ public class PlanetModel {
         this.sizeY = sizeY;
     }
 
+    public PlanetModel(UUID id, String name, int sizeX, int sizeY) {
+        Id = id;
+        this.name = name;
+        this.sizeX = sizeX;
+        this.sizeY = sizeY;
+    }
+
     public PlanetModel() {
 
     }
+
     public List<ProbeModel> getProbes() {
         return probes;
     }
 
+    @JsonIgnore
+    public UUID getId() {
+        return Id;
+    }
     public String getName() {
         return name;
     }

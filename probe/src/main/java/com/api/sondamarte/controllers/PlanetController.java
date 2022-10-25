@@ -47,5 +47,9 @@ public class PlanetController {
         return ResponseEntity.status(HttpStatus.OK).body(planetService.deleteByName(name));
     }
 
-    // TODO: still needs to add put method to modify the planet name
+    @PutMapping("/{name}")
+    public ResponseEntity<Object> changePlanetName(@PathVariable(value = "name") String name,
+                                                   @RequestBody @Valid PlanetDto planetDto){
+        return ResponseEntity.status(HttpStatus.OK).body(planetService.changePlanetName(name, planetDto));
+    }
 }

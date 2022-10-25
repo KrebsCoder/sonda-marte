@@ -75,4 +75,18 @@ public class PlanetService {
         planetRepository.delete(planetModelOptional.get());
         return ResponseEntity.status(HttpStatus.OK).body("All planets were deleted.");
     }
+
+    @Transactional
+    public ResponseEntity<Object> changePlanetName(String name, PlanetDto planetDto) {
+        Optional<PlanetModel> optionalPlanetModel = planetRepository.findByName(name);
+        if (optionalPlanetModel.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Planet not found.");
+        }
+        var planetModel = new PlanetModel(
+                optionalPlanetModel.get().getId(),
+                planetDto.getName(),
+                planetDto.getSizeX(),
+                planetDto.getSizeY());
+        return ResponseEntity.status(HttpStatus.CREATED).body(save(planetModel));
+    }
 }
