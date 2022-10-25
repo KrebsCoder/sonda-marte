@@ -1,8 +1,9 @@
 package com.api.sondamarte.models;
 
-import com.sun.istack.NotNull;
 
 import javax.persistence.*;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 @Entity
@@ -17,18 +18,38 @@ public class ProbeModel {
     private int startPositionX;
     @Column(nullable = false)
     private int startPositionY;
+    // charAt[0]
     @Column(nullable = false, length = 1)
-    private char facingPosition;
+    private String facingPosition;
 
-    @Column(nullable = false, length = 255)
-    private String planetName;
+    @ManyToOne
+    private PlanetModel planet;
 
-    public ProbeModel(String name, int startPositionX, int startPositionY, char facingPosition, String planetName) {
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ProbeModel that = (ProbeModel) o;
+        return startPositionX == that.startPositionX && startPositionY == that.startPositionY && Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(facingPosition, that.facingPosition) && Objects.equals(planet, that.planet);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, startPositionX, startPositionY, facingPosition, planet);
+    }
+
+    public ProbeModel(String name, int startPositionX, int startPositionY, String facingPosition, PlanetModel planet) {
         this.name = name;
         this.startPositionX = startPositionX;
         this.startPositionY = startPositionY;
         this.facingPosition = facingPosition;
-        this.planetName = planetName;
+        this.planet = planet;
+    }
+
+    public PlanetModel getPlanet() {
+        return planet;
     }
 
     public ProbeModel() {
@@ -46,7 +67,7 @@ public class ProbeModel {
         return startPositionY;
     }
 
-    public char getFacingPosition() {
+    public String getFacingPosition() {
         return facingPosition;
     }
 }

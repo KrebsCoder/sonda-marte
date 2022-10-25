@@ -11,7 +11,7 @@ public class ProbeDto {
     @NotNull
     private int startPositionY;
     @NotNull
-    private char facingPosition;
+    private String facingPosition;
     @NotNull
     private String planetName;
 
@@ -28,7 +28,7 @@ public class ProbeDto {
         return startPositionY;
     }
 
-    public char getFacingPosition() {
+    public String getFacingPosition() {
         return facingPosition;
     }
 
