@@ -35,7 +35,7 @@ public class PlanetModel {
         return Objects.hash(Id, name, sizeX, sizeY, probes);
     }
 
-    @OneToMany(mappedBy = "planet")
+    @OneToMany(mappedBy = "planet", cascade = CascadeType.ALL)
     @JsonIgnore
     private final List<ProbeModel> probes = new ArrayList<>();
 
