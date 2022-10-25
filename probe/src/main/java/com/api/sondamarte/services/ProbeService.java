@@ -7,6 +7,7 @@ import com.api.sondamarte.repositories.ProbeRepository;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -36,5 +37,12 @@ public class ProbeService {
     @Transactional
     public ProbeModel save(ProbeModel probe) {
         return probeRepository.save(probe);
+    }
+
+    public List<ProbeModel> findAll() {
+        return probeRepository.findAll();
+    }
+    public Optional<ProbeModel> findByName(String name) {
+        return probeRepository.findByName(name);
     }
 }
