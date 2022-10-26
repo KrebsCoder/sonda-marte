@@ -53,4 +53,9 @@ public class ProbeController {
                                                   @RequestBody @Valid ProbeDto probeDto){
         return ResponseEntity.status(HttpStatus.OK).body(probeService.changeProbeName(name, probeDto));
     }
+
+    @PutMapping("/move")
+    public ResponseEntity<Object> moveProbe(@RequestBody @Valid ProbeDto probeDto){
+        return ResponseEntity.status(HttpStatus.OK).body(probeService.changeProbeDirection(probeDto));
+    }
 }
