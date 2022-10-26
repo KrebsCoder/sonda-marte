@@ -34,12 +34,8 @@ public class PlanetService {
     }
 
     public ResponseEntity<Object> findAll() {
-        int i = 0;
         Optional<List<PlanetModel>> planetModelOptional = Optional.of(planetRepository.findAll());
-        for (PlanetModel planetModel : planetModelOptional.get()){
-            i++;
-        }
-        if (i == 0){
+        if (planetModelOptional.get().isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Planet not found.");
         }
         return ResponseEntity.status(HttpStatus.OK).body(planetModelOptional.get());
