@@ -19,21 +19,23 @@ public class ProbeService {
     ProbeRepository probeRepository;
     PlanetRepository planetRepository;
 
-
     public ProbeService(ProbeRepository probeRepository, PlanetRepository planetRepository) {
         this.probeRepository = probeRepository;
         this.planetRepository = planetRepository;
     }
 
-    public ProbeModel createProbe(ProbeDto probeDto){
-        Optional<PlanetModel> planetName = planetRepository.findByName(probeDto.getPlanetName());
-        // TODO validar se a sonda tem o nome do planeta
-        return new ProbeModel(
+    public ResponseEntity<Object> createProbe(ProbeDto probeDto){
+        Optional<PlanetModel> optionalPlanetModel = planetRepository.findByName(probeDto.getPlanetName());
+        if (optionalPlanetModel.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Probe planet not found.");
+        }
+        var probeModel = new ProbeModel(
                 probeDto.getName(),
                 probeDto.getStartPositionX(),
                 probeDto.getStartPositionY(),
                 probeDto.getFacingPosition(),
-                planetName.get());
+                optionalPlanetModel.get());
+        return ResponseEntity.status(HttpStatus.CREATED).body(save(probeModel));
     }
 
 
@@ -62,11 +64,34 @@ public class ProbeService {
         return probes;
     }
 
+    @Transactional
     public ResponseEntity<Object> deleteByName(String name) {
         Optional<ProbeModel> probe = probeRepository.findByName(name);
         if (probe.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Probe not found.");
         }
+        probeRepository.deleteByName(name);
         return ResponseEntity.status(HttpStatus.OK).body(probe.get());
+    }
+
+    public ResponseEntity<Object> changeProbeName(String name, ProbeDto probeDto) {
+        Optional<ProbeModel> optionalProbeModel = probeRepository.findByName(name);
+        Optional<PlanetModel> optionalPlanetModel = planetRepository.findByName(probeDto.getPlanetName());
+
+        if (optionalProbeModel.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Probe not found.");
+        } else if (optionalPlanetModel.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Probe planet not found.");
+        }
+
+        var probeModel = new ProbeModel(
+                optionalProbeModel.get().getId(),
+                probeDto.getName(),
+                probeDto.getStartPositionX(),
+                probeDto.getStartPositionY(),
+                probeDto.getFacingPosition(),
+                optionalPlanetModel.get());
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(save(probeModel));
     }
 }

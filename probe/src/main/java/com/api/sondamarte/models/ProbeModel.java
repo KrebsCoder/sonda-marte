@@ -1,6 +1,8 @@
 package com.api.sondamarte.models;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Objects;
 import java.util.Optional;
@@ -46,11 +48,25 @@ public class ProbeModel {
         this.planet = planet;
     }
 
+    public ProbeModel(UUID id, String name, int startPositionX, int startPositionY, String facingPosition, PlanetModel planet) {
+        this.id = id;
+        this.name = name;
+        this.startPositionX = startPositionX;
+        this.startPositionY = startPositionY;
+        this.facingPosition = facingPosition;
+        this.planet = planet;
+    }
+
+    public ProbeModel() {
+    }
+
     public PlanetModel getPlanet() {
         return planet;
     }
 
-    public ProbeModel() {
+    @JsonIgnore
+    public UUID getId() {
+        return id;
     }
 
     public String getName() {

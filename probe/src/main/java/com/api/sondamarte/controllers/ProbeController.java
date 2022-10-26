@@ -25,7 +25,7 @@ public class ProbeController {
 
     @PostMapping
     public ResponseEntity<Object> createProbe(@RequestBody @Valid ProbeDto probeDto){
-        return ResponseEntity.status(HttpStatus.CREATED).body(probeService.save(probeService.createProbe(probeDto)));
+        return ResponseEntity.status(HttpStatus.CREATED).body(probeService.createProbe(probeDto));
     }
 
     @GetMapping("/{name}")
@@ -42,9 +42,15 @@ public class ProbeController {
     public ResponseEntity<Object> deleteAllProbes(){
         return ResponseEntity.status(HttpStatus.OK).body(probeService.deleteAll());
     }
+
     @DeleteMapping("/{name}")
     public ResponseEntity<Object> deleteProbeByName(@PathVariable(value = "name") String name){
-        // if se tudo estiver ok
         return ResponseEntity.status(HttpStatus.OK).body(probeService.deleteByName(name));
+    }
+
+    @PutMapping("/{name}")
+    public ResponseEntity<Object> changeProbeName(@PathVariable(value = "name") String name,
+                                                  @RequestBody @Valid ProbeDto probeDto){
+        return ResponseEntity.status(HttpStatus.OK).body(probeService.changeProbeName(name, probeDto));
     }
 }
