@@ -6,14 +6,15 @@ public class ProbeDto {
 
     @NotNull
     private String name;
-    @NotNull
+
     private int startPositionX;
-    @NotNull
+
     private int startPositionY;
-    @NotNull
+
     private String facingPosition;
-    @NotNull
     private String planetName;
+
+    private String movement;
 
 
     public String getName() {
@@ -34,5 +35,9 @@ public class ProbeDto {
 
     public String getPlanetName() {
         return planetName;
+    }
+
+    public String getMovement() {
+        return movement;
     }
 }
