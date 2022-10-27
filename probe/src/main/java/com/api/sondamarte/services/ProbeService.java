@@ -30,6 +30,9 @@ public class ProbeService {
         if (optionalPlanetModel.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Probe planet not found.");
         }
+        if (!validateProbeCreation(probeDto, optionalPlanetModel)){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Probe position is invalid");
+        }
         var probeModel = new ProbeModel(
                 probeDto.getName(),
                 probeDto.getStartPositionX(),
@@ -39,6 +42,22 @@ public class ProbeService {
         return ResponseEntity.status(HttpStatus.CREATED).body(save(probeModel));
     }
 
+    private boolean validateProbeCreation(ProbeDto probeDto, Optional<PlanetModel> optionalPlanetModel) {
+        int posY = probeDto.getStartPositionY();
+        int posX = probeDto.getStartPositionX();
+        PlanetModel planet = optionalPlanetModel.get();
+        List<ProbeModel> probeModelList = planet.getProbes();
+
+        for (ProbeModel probe : probeModelList){
+            if (posX == probe.getPositionX() && posY == probe.getPositionY()){
+                return false;
+            }
+        }
+        if ((posY > planet.getSizeY() || posY < 0) || (posX > planet.getSizeX() || posX < 0)){
+            return false;
+        }
+        return true;
+    }
     @Transactional
     public ProbeModel save(ProbeModel probe) {
         return probeRepository.save(probe);
