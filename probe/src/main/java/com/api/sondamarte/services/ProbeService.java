@@ -164,7 +164,7 @@ public class ProbeService {
         List<ProbeModel> probesList = probeModel.getPlanet().getProbes();
 
         for (ProbeModel probe : probesList){
-            if (posX == probe.getPositionX() && posY == probe.getPositionY()){
+            if ((probe != probeModel) &&  posX == probe.getPositionX() && posY == probe.getPositionY()){
                 return false;
             }
         }
