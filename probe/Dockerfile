@@ -1,15 +1,15 @@
-FROM maven:3.8.6-eclipse-temurin-11 AS build
+FROM maven:latest AS build
 
 RUN mkdir /artefact
 COPY . /artefact
 WORKDIR /artefact
 RUN mvn clean package -DskipTests
 
-FROM adoptopenjdk/openjdk11:alpine-jre
+FROM openjdk:17-ea-alpine
 
 WORKDIR /app
-COPY --from=build /artefact/target/probe.jar probe.jar
+COPY --from=build /artefact/target/*.jar *.jar
 
-ENTRYPOINT ["java","-jar","probe.jar"]
+ENTRYPOINT ["java","-jar","*.jar"]
 
 EXPOSE 8080
