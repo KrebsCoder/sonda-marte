@@ -27,8 +27,8 @@ public class ProbeService {
 
     public ResponseEntity<Object> createProbe(ProbeDto probeDto){
         Optional<PlanetModel> optionalPlanetModel = planetRepository.findByName(probeDto.getPlanetName());
-        if (optionalPlanetModel.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Probe planet not found.");
+        if (optionalPlanetModel.isEmpty() || !validateProbeCreation(probeDto, optionalPlanetModel) || !validateProbeName(probeDto.getName())){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid information on probe creation.");
         }
         var probeModel = new ProbeModel(
                 probeDto.getName(),
@@ -37,6 +37,30 @@ public class ProbeService {
                 probeDto.getFacingPosition(),
                 optionalPlanetModel.get());
         return ResponseEntity.status(HttpStatus.CREATED).body(save(probeModel));
+    }
+
+    private boolean validateProbeCreation(ProbeDto probeDto, Optional<PlanetModel> optionalPlanetModel) {
+        int posY = probeDto.getStartPositionY();
+        int posX = probeDto.getStartPositionX();
+        PlanetModel planet = optionalPlanetModel.get();
+        List<ProbeModel> probeModelList = planet.getProbes();
+
+        for (ProbeModel probe : probeModelList){
+            if (!validateProbePosXPosY(probe, posX, posY)){
+                return false;
+            }
+        }
+        if ((posY > planet.getSizeY() || posY < 0) || (posX > planet.getSizeX() || posX < 0)){
+            return false;
+        }
+        return true;
+    }
+    private boolean validateProbeName(String name) {
+        Optional<ProbeModel> probe = probeRepository.findByName(name);
+        if (probe.isPresent()){
+            return false;
+        }
+        return true;
     }
 
 
@@ -61,12 +85,15 @@ public class ProbeService {
     }
 
     @Transactional
-    public List<ProbeModel> deleteAll() {
+    public ResponseEntity<Object> deleteAll() {
         List<ProbeModel> probes = probeRepository.findAll();
+        if (probes.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Probe not found.");
+        }
         for (ProbeModel probe : probes){
             probeRepository.deleteByName(probe.getName());
         }
-        return probes;
+        return ResponseEntity.status(HttpStatus.OK).body(probes);
     }
 
     @Transactional
@@ -111,25 +138,40 @@ public class ProbeService {
             } else if (probeDto.getMovement().charAt(i) == 'R'){
                 handleMovementRight(optionalProbeModel.get());
             } else if (probeDto.getMovement().charAt(i) == 'M'){
-                handleMovement(optionalProbeModel.get());
+                if (!handleMovement(optionalProbeModel.get())){
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("There's an obstacle in the given path.");
+                }
             }
         }
         return ResponseEntity.status(HttpStatus.OK).body(save(optionalProbeModel.get()));
     }
 
-    private void handleMovement(ProbeModel probeModel) {
+    private boolean handleMovement(ProbeModel probeModel) {
 
-        switch (probeModel.getDirection()){
-            case NORTH -> moveProbeNorth(probeModel);
-            case SOUTH -> moveProbeSouth(probeModel);
-            case EAST -> moveProbeEast(probeModel);
-            case WEST -> moveProbeWest(probeModel);
+        if (!validateProbePosXPosY(probeModel, probeModel.getPositionX(), probeModel.getPositionY())){
+            return false;
         }
+        switch (probeModel.getDirection()){
+            case NORTH ->  moveProbeNorth(probeModel);
+            case SOUTH ->  moveProbeSouth(probeModel);
+            case EAST ->  moveProbeEast(probeModel);
+            case WEST ->  moveProbeWest(probeModel);
+        }
+        return true;
+    }
+
+    private boolean validateProbePosXPosY(ProbeModel probeModel, int posX, int posY) {
+        List<ProbeModel> probesList = probeModel.getPlanet().getProbes();
+
+        for (ProbeModel probe : probesList){
+            if (posX == probe.getPositionX() && posY == probe.getPositionY()){
+                return false;
+            }
+        }
+        return true;
     }
 
     private void moveProbeWest(ProbeModel probeModel) {
-        int x = probeModel.getPositionX();
-
         if (probeModel.getPositionX() == 0){
             probeModel.changePositionX(probeModel.getPlanet().getSizeX());
         } else {
@@ -138,8 +180,6 @@ public class ProbeService {
     }
 
     private void moveProbeEast(ProbeModel probeModel) {
-        int x = probeModel.getPositionX();
-
         if (probeModel.getPositionX() == probeModel.getPlanet().getSizeX()){
             probeModel.changePositionX(0);
         } else {
@@ -148,8 +188,6 @@ public class ProbeService {
     }
 
     private void moveProbeSouth(ProbeModel probeModel) {
-        int y = probeModel.getPositionY();
-
         if (probeModel.getPositionY() == 0){
             probeModel.changePositionY(probeModel.getPlanet().getSizeY());
         } else {
@@ -158,8 +196,6 @@ public class ProbeService {
     }
 
     private void moveProbeNorth(ProbeModel probeModel) {
-        int y = probeModel.getPositionY();
-
         if (probeModel.getPositionY() == probeModel.getPlanet().getSizeY()){
             probeModel.changePositionY(0);
         } else {

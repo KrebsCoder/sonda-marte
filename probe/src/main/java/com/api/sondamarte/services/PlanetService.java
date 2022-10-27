@@ -20,12 +20,13 @@ public class PlanetService {
         this.planetRepository = planetRepository;
     }
 
-    public PlanetModel createPlanet(PlanetDto planetDto){
-        return new PlanetModel(planetDto.getName(), planetDto.getSizeX(), planetDto.getSizeY());
-    }
-
-    public int planetTotalSize(PlanetModel planetModel){
-        return planetModel.getSizeX() * planetModel.getSizeY();
+    public ResponseEntity<Object> createPlanet(PlanetDto planetDto){
+        Optional<PlanetModel> planet = planetRepository.findByName(planetDto.getName());
+        if (planet.isPresent()){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Planet already exists.");
+        }
+        PlanetModel planetModel = new PlanetModel(planetDto.getName(), planetDto.getSizeX(), planetDto.getSizeY());
+        return ResponseEntity.status(HttpStatus.OK).body(save(planetModel));
     }
 
     @Transactional
@@ -49,10 +50,6 @@ public class PlanetService {
         return ResponseEntity.status(HttpStatus.OK).body(planetModelOptional.get());
     }
 
-    @Transactional
-    public void delete(PlanetModel planetModel) {
-        planetRepository.deleteByName(planetModel.getName());
-    }
 
     @Transactional
     public List<PlanetModel> deleteAll() {
