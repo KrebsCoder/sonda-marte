@@ -49,7 +49,7 @@ public class ProbeService {
         List<ProbeModel> probeModelList = planet.getProbes();
 
         for (ProbeModel probe : probeModelList){
-            if (posX == probe.getPositionX() && posY == probe.getPositionY()){
+            if (!validateProbePosXPosY(probe, probe.getPositionX(), probe.getPositionY())){
                 return false;
             }
         }
@@ -143,7 +143,7 @@ public class ProbeService {
 
     private boolean handleMovement(ProbeModel probeModel) {
 
-        if (!validateProbeMove(probeModel)){
+        if (!validateProbePosXPosY(probeModel, probeModel.getPositionX(), probeModel.getPositionY())){
             return false;
         }
         switch (probeModel.getDirection()){
@@ -155,11 +155,8 @@ public class ProbeService {
         return true;
     }
 
-    private boolean validateProbeMove(ProbeModel probeModel) {
-        int posX = probeModel.getPositionX();
-        int posY = probeModel.getPositionY();
-        PlanetModel planetOptional = probeModel.getPlanet();
-        List<ProbeModel> probesList = planetOptional.getProbes();
+    private boolean validateProbePosXPosY(ProbeModel probeModel, int posX, int posY) {
+        List<ProbeModel> probesList = probeModel.getPlanet().getProbes();
 
         for (ProbeModel probe : probesList){
             if (posX == probe.getPositionX() && posY == probe.getPositionY()){
