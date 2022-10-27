@@ -27,11 +27,8 @@ public class ProbeService {
 
     public ResponseEntity<Object> createProbe(ProbeDto probeDto){
         Optional<PlanetModel> optionalPlanetModel = planetRepository.findByName(probeDto.getPlanetName());
-        if (optionalPlanetModel.isEmpty()){
+        if (optionalPlanetModel.isEmpty() || !validateProbeCreation(probeDto, optionalPlanetModel) || !validateProbeName(probeDto.getName())){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Probe planet not found.");
-        }
-        if (!validateProbeCreation(probeDto, optionalPlanetModel)){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Probe position is invalid");
         }
         var probeModel = new ProbeModel(
                 probeDto.getName(),
@@ -58,6 +55,15 @@ public class ProbeService {
         }
         return true;
     }
+
+    private boolean validateProbeName(String name) {
+        Optional<ProbeModel> probe = probeRepository.findByName(name);
+        if (probe.isPresent()){
+            return false;
+        }
+        return true;
+    }
+
 
     @Transactional
     public ProbeModel save(ProbeModel probe) {
