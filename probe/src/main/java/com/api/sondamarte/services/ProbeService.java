@@ -39,7 +39,6 @@ public class ProbeService {
         return ResponseEntity.status(HttpStatus.CREATED).body(save(probeModel));
     }
 
-
     @Transactional
     public ProbeModel save(ProbeModel probe) {
         return probeRepository.save(probe);
@@ -61,12 +60,15 @@ public class ProbeService {
     }
 
     @Transactional
-    public List<ProbeModel> deleteAll() {
+    public ResponseEntity<Object> deleteAll() {
         List<ProbeModel> probes = probeRepository.findAll();
+        if (probes.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Probe not found.");
+        }
         for (ProbeModel probe : probes){
             probeRepository.deleteByName(probe.getName());
         }
-        return probes;
+        return ResponseEntity.status(HttpStatus.OK).body(probes);
     }
 
     @Transactional
