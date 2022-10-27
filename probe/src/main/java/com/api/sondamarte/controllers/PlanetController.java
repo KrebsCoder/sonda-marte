@@ -21,12 +21,9 @@ public class PlanetController {
 
     @PostMapping
     public ResponseEntity<Object> createPlanet(@RequestBody @Valid PlanetDto planetDto){
-        return ResponseEntity.status(HttpStatus.CREATED).body(planetService.save(planetService.createPlanet(planetDto)));
+        return ResponseEntity.status(HttpStatus.CREATED).body(planetService.createPlanet(planetDto));
     }
 
-    // check if there is no planet like the one received in the json || json should contain the planet name
-    //
-    // refatorar, retornar algo mensagem caso não ache nenhum planeta.
     @GetMapping
     public ResponseEntity<Object> getAllPlanets(){
         return ResponseEntity.status(HttpStatus.OK).body(planetService.findAll());
