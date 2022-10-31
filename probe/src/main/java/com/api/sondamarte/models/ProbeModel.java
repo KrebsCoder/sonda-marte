@@ -20,7 +20,7 @@ public class ProbeModel {
     private int positionX;
     @Column(nullable = false)
     private int positionY;
-    // charAt[0]
+
     @Column(nullable = false, length = 5)
     private ProbeDirection direction;
 
