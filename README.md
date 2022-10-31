@@ -6,7 +6,7 @@ Esse projeto foi um desafio proposto pela <a href="https://gist.github.com/elo7-
 
 ## Como rodar a API
 
-- Certifique-se de estar na pasta raiz do projeto, após isso, crie um arquivo que termine com .env, ele servirá para o docker reconhecer variáveis de ambiente e subir o banco de dados, coloque as seguintes informações dentro dele:
+- Certifique-se de estar na pasta raiz do projeto, após isso, crie um arquivo chamado *probe.env*, ele servirá para o docker reconhecer variáveis de ambiente e subir o banco de dados, coloque as seguintes informações dentro dele:
 
 ```
 POSTGRES_USER=postgres
