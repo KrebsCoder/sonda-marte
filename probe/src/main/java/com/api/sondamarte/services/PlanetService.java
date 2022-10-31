@@ -3,6 +3,7 @@ package com.api.sondamarte.services;
 import com.api.sondamarte.dtos.PlanetDto;
 import com.api.sondamarte.models.PlanetModel;
 import com.api.sondamarte.repositories.PlanetRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ public class PlanetService {
 
     final PlanetRepository planetRepository;
 
+    @Autowired
     public PlanetService(PlanetRepository planetRepository) {
         this.planetRepository = planetRepository;
     }

@@ -6,6 +6,7 @@ import com.api.sondamarte.models.ProbeModel;
 import com.api.sondamarte.repositories.PlanetRepository;
 import com.api.sondamarte.repositories.ProbeRepository;
 import com.api.sondamarte.enums.ProbeDirection;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ public class ProbeService {
     ProbeRepository probeRepository;
     PlanetRepository planetRepository;
 
+    @Autowired
     public ProbeService(ProbeRepository probeRepository, PlanetRepository planetRepository) {
         this.probeRepository = probeRepository;
         this.planetRepository = planetRepository;
@@ -170,7 +172,7 @@ public class ProbeService {
         }
         return true;
     }
-    
+
     private boolean validateProbePosXPosY(ProbeModel probeModel, int posX, int posY) {
         List<ProbeModel> probesList = probeModel.getPlanet().getProbes();
 

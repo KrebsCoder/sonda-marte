@@ -27,19 +27,6 @@ public class ProbeModel {
     @ManyToOne
     private PlanetModel planet;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ProbeModel that = (ProbeModel) o;
-        return positionX == that.positionX && positionY == that.positionY && Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(direction, that.direction) && Objects.equals(planet, that.planet);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name, positionX, positionY, direction, planet);
-    }
-
     public ProbeModel(String name, int positionX, int positionY, String direction, PlanetModel planet) {
         this.name = name;
         this.positionX = positionX;

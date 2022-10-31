@@ -22,19 +22,6 @@ public class PlanetModel {
     @Column(nullable = false)
     private int sizeY;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        PlanetModel that = (PlanetModel) o;
-        return sizeX == that.sizeX && sizeY == that.sizeY && Objects.equals(Id, that.Id) && Objects.equals(name, that.name) && Objects.equals(probes, that.probes);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(Id, name, sizeX, sizeY, probes);
-    }
-
     @OneToMany(mappedBy = "planet", cascade = CascadeType.ALL)
     @JsonIgnore
     private final List<ProbeModel> probes = new ArrayList<>();
