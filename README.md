@@ -16,7 +16,7 @@ POSTGRES_PORT=5432
 DATABASE_HOST=database
 ```
 
-- Digite o comando que irá baixar todas as dependências e iniciar o servidor (OBS: necessitará de ter as portas 8080 e 5432 liberadas):
+- Digite o comando que irá baixar todas as dependências e iniciar o servidor (Obs: necessitará de ter as portas 8080 e 5432 liberadas):
 
 ```
 docker-compose up
