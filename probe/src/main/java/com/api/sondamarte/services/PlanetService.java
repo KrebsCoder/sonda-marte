@@ -22,20 +22,16 @@ public class PlanetService {
         this.planetRepository = planetRepository;
     }
 
+    @Transactional
     public PlanetModel createPlanet(PlanetDto planetDto){
         Optional<PlanetModel> planet = planetRepository.findByName(planetDto.getName());
         if (planet.isPresent()){
             throw new RuntimeException("Planet already exists.");
         }
-        PlanetModel planetModel = new PlanetModel(planetDto.getName(), planetDto.getSizeX(), planetDto.getSizeY());
-        return save(planetModel);
+        return planetRepository.save(new PlanetModel(planetDto.getName(), planetDto.getSizeX(), planetDto.getSizeY()));
     }
 
-    @Transactional
-    public PlanetModel save(PlanetModel planetModel){
-        return planetRepository.save(planetModel);
-    }
-
+    // could be improved with pagination
     public List<PlanetModel> findAll() {
         Optional<List<PlanetModel>> planetModelOptional = Optional.of(planetRepository.findAll());
         if (planetModelOptional.get().isEmpty()){
@@ -53,13 +49,14 @@ public class PlanetService {
     }
 
 
-    public String deleteByName(String name) {
+    @Transactional
+    public PlanetModel deleteByName(String name) {
         Optional<PlanetModel> planetModelOptional = planetRepository.findByName(name);
         if (planetModelOptional.isEmpty()){
             throw new RuntimeException("Planet not found.");
         }
         planetRepository.delete(planetModelOptional.get());
-        return "Planet deleted.";
+        return planetModelOptional.get();
     }
 
     @Transactional
@@ -68,11 +65,11 @@ public class PlanetService {
         if (optionalPlanetModel.isEmpty()){
             throw new RuntimeException("Planet not found.");
         }
-        var planetModel = new PlanetModel(
+        PlanetModel planetModel = new PlanetModel(
                 optionalPlanetModel.get().getId(),
                 planetDto.getName(),
-                planetDto.getSizeX(),
-                planetDto.getSizeY());
-        return save(planetModel);
+                optionalPlanetModel.get().getSizeX(),
+                optionalPlanetModel.get().getSizeY());
+        return planetRepository.save(planetModel);
     }
 }
