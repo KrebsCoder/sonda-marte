@@ -5,7 +5,6 @@ import com.api.sondamarte.models.PlanetModel;
 import com.api.sondamarte.models.ProbeModel;
 import com.api.sondamarte.repositories.PlanetRepository;
 import com.api.sondamarte.repositories.ProbeRepository;
-import com.api.sondamarte.enums.ProbeDirection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -129,25 +128,26 @@ public class ProbeService {
         return ResponseEntity.status(HttpStatus.CREATED).body(save(probeModel));
     }
 
-    public ResponseEntity<Object> changeProbeDirection(ProbeDto probeDto) {
+    public ProbeModel changeProbeDirection(ProbeDto probeDto) {
         Optional<ProbeModel> optionalProbeModel = probeRepository.findByName(probeDto.getName());
         if (optionalProbeModel.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Probe not found.");
+            throw new RuntimeException("Probe not found.");
         }
         for (int i = 0; i < probeDto.getMovement().length(); i++){
             if (probeDto.getMovement().charAt(i) == 'L'){
-                handleMovementLeft(optionalProbeModel.get());
+                optionalProbeModel.get().turnLeft();
             } else if (probeDto.getMovement().charAt(i) == 'R'){
-                handleMovementRight(optionalProbeModel.get());
+                optionalProbeModel.get().turnRight();
             } else if (probeDto.getMovement().charAt(i) == 'M'){
                 if (!handleMovement(optionalProbeModel.get())){
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("There's an obstacle in the given path.");
+                    throw new RuntimeException("There's a obstacle in the path.");
                 }
             }
         }
-        return ResponseEntity.status(HttpStatus.OK).body(save(optionalProbeModel.get()));
+        return save(optionalProbeModel.get());
     }
 
+    //avoid private methods
     private boolean handleMovement(ProbeModel probeModel) {
 
         if (!validateProbePosXPosY(probeModel, probeModel.getPositionX(), probeModel.getPositionY())){
@@ -177,7 +177,7 @@ public class ProbeService {
         List<ProbeModel> probesList = probeModel.getPlanet().getProbes();
 
         for (ProbeModel probe : probesList){
-            if ((probe != probeModel) &&posX == probe.getPositionX() && posY == probe.getPositionY()){
+            if ((probe != probeModel) && posX == probe.getPositionX() && posY == probe.getPositionY()){
                 return false;
             }
         }
@@ -216,22 +216,4 @@ public class ProbeService {
         }
     }
 
-
-    private void handleMovementRight(ProbeModel probeModel) {
-        switch (probeModel.getDirection()){
-            case NORTH -> probeModel.changeDirection(probeModel, ProbeDirection.EAST);
-            case SOUTH -> probeModel.changeDirection(probeModel, ProbeDirection.WEST);
-            case EAST -> probeModel.changeDirection(probeModel, ProbeDirection.SOUTH);
-            case WEST -> probeModel.changeDirection(probeModel, ProbeDirection.NORTH);
-        }
-    }
-
-    private void handleMovementLeft(ProbeModel probeModel) {
-        switch (probeModel.getDirection()) {
-            case NORTH -> probeModel.changeDirection(probeModel, ProbeDirection.WEST);
-            case SOUTH -> probeModel.changeDirection(probeModel, ProbeDirection.EAST);
-            case EAST -> probeModel.changeDirection(probeModel, ProbeDirection.NORTH);
-            case WEST -> probeModel.changeDirection(probeModel, ProbeDirection.SOUTH);
-        }
-    }
 }
