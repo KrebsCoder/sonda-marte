@@ -26,10 +26,10 @@ public class ProbeService {
         this.planetRepository = planetRepository;
     }
 
-    public ResponseEntity<Object> createProbe(ProbeDto probeDto){
+    public ProbeModel createProbe(ProbeDto probeDto){
         Optional<PlanetModel> optionalPlanetModel = planetRepository.findByName(probeDto.getPlanetName());
         if (optionalPlanetModel.isEmpty() || !validateProbeCreation(probeDto, optionalPlanetModel) || !validateProbeName(probeDto.getName())){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid information on probe creation.");
+            throw new RuntimeException("Invalid information on probe creation.");
         }
         var probeModel = new ProbeModel(
                 probeDto.getName(),
@@ -37,7 +37,7 @@ public class ProbeService {
                 probeDto.getStartPositionY(),
                 probeDto.getFacingPosition(),
                 optionalPlanetModel.get());
-        return ResponseEntity.status(HttpStatus.CREATED).body(save(probeModel));
+        return save(probeModel);
     }
 
     private boolean validateProbeCreation(ProbeDto probeDto, Optional<PlanetModel> optionalPlanetModel) {
@@ -70,50 +70,50 @@ public class ProbeService {
         return probeRepository.save(probe);
     }
 
-    public ResponseEntity<Object> findAll() {
+    public List<ProbeModel> findAll() {
         Optional<List<ProbeModel>> optionalProbeModelList = Optional.of(probeRepository.findAll());
         if (optionalProbeModelList.get().isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Probe not found.");
+            throw new RuntimeException("Probe not found.");
         }
-        return ResponseEntity.status(HttpStatus.OK).body(optionalProbeModelList.get());
+        return optionalProbeModelList.get();
     }
-    public ResponseEntity<Object> findByName(String name) {
+    public ProbeModel findByName(String name) {
         Optional<ProbeModel> probeModelOptional = probeRepository.findByName(name);
         if (probeModelOptional.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Probe not found.");
+            throw new RuntimeException("Probe not found.");
         }
-        return ResponseEntity.status(HttpStatus.OK).body(probeModelOptional.get());
+        return probeModelOptional.get();
     }
 
     @Transactional
-    public ResponseEntity<Object> deleteByName(String name) {
+    public ProbeModel deleteByName(String name) {
         Optional<ProbeModel> probe = probeRepository.findByName(name);
         if (probe.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Probe not found.");
+            throw new RuntimeException("Probe not found.");
         }
         probeRepository.deleteByName(name);
-        return ResponseEntity.status(HttpStatus.OK).body(probe.get());
+        return probe.get();
     }
 
-    public ResponseEntity<Object> changeProbeName(String name, ProbeDto probeDto) {
+    public ProbeModel changeProbeName(String name, ProbeDto probeDto) {
         Optional<ProbeModel> optionalProbeModel = probeRepository.findByName(name);
         Optional<PlanetModel> optionalPlanetModel = planetRepository.findByName(probeDto.getPlanetName());
 
         if (optionalProbeModel.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Probe not found.");
+            throw new RuntimeException("Probe not found.");
         } else if (optionalPlanetModel.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Probe planet not found.");
+            throw new RuntimeException("Probe planet not found.");
         }
 
         var probeModel = new ProbeModel(
                 optionalProbeModel.get().getId(),
                 probeDto.getName(),
-                probeDto.getStartPositionX(),
-                probeDto.getStartPositionY(),
-                probeDto.getFacingPosition(),
+                optionalProbeModel.get().getPositionX(),
+                optionalProbeModel.get().getPositionY(),
+                optionalProbeModel.get().getDirection().toString(),
                 optionalPlanetModel.get());
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(save(probeModel));
+        return save(probeModel);
     }
 
     public ProbeModel changeProbeDirection(ProbeDto probeDto) {
@@ -121,6 +121,7 @@ public class ProbeService {
         if (optionalProbeModel.isEmpty()){
             throw new RuntimeException("Probe not found.");
         }
+        //should be in model
         for (int i = 0; i < probeDto.getMovement().length(); i++){
             if (probeDto.getMovement().charAt(i) == 'L'){
                 optionalProbeModel.get().turnLeft();
