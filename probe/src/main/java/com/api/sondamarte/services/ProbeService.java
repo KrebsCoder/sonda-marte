@@ -6,10 +6,7 @@ import com.api.sondamarte.models.ProbeModel;
 import com.api.sondamarte.repositories.PlanetRepository;
 import com.api.sondamarte.repositories.ProbeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +25,8 @@ public class ProbeService {
 
     public ProbeModel createProbe(ProbeDto probeDto){
         Optional<PlanetModel> optionalPlanetModel = planetRepository.findByName(probeDto.getPlanetName());
-        if (optionalPlanetModel.isEmpty() || !validateProbeCreation(probeDto, optionalPlanetModel) || !validateProbeName(probeDto.getName())){
+        // !validateProbeCreation(probeDto, optionalPlanetModel.get()) ||
+        if (optionalPlanetModel.isEmpty() ||  !validateProbeName(probeDto.getName())){
             throw new RuntimeException("Invalid information on probe creation.");
         }
         var probeModel = new ProbeModel(
@@ -40,22 +38,21 @@ public class ProbeService {
         return save(probeModel);
     }
 
-    private boolean validateProbeCreation(ProbeDto probeDto, Optional<PlanetModel> optionalPlanetModel) {
-        int posY = probeDto.getStartPositionY();
-        int posX = probeDto.getStartPositionX();
-        PlanetModel planet = optionalPlanetModel.get();
-        List<ProbeModel> probeModelList = planet.getProbes();
-
-        for (ProbeModel probe : probeModelList){
-            if (!validateProbeCreationPosXPosY(probe, posX, posY)){
-                return false;
-            }
-        }
-        if ((posY > planet.getSizeY() || posY < 0) || (posX > planet.getSizeX() || posX < 0)){
-            return false;
-        }
-        return true;
-    }
+//    private boolean validateProbeCreation(ProbeDto probeDto, PlanetModel planet) {
+//        int posY = probeDto.getStartPositionY();
+//        int posX = probeDto.getStartPositionX();
+//        List<ProbeModel> probeModelList = planet.getProbes();
+//
+//        for (ProbeModel probe : probeModelList){
+//            if (!validateProbeCreationPosXPosY(probe, posX, posY)){
+//                return false;
+//            }
+//        }
+//        if ((posY > planet.getSizeY() || posY < 0) || (posX > planet.getSizeX() || posX < 0)){
+//            return false;
+//        }
+//        return true;
+//    }
     private boolean validateProbeName(String name) {
         Optional<ProbeModel> probe = probeRepository.findByName(name);
         if (probe.isPresent()){
@@ -121,88 +118,7 @@ public class ProbeService {
         if (optionalProbeModel.isEmpty()){
             throw new RuntimeException("Probe not found.");
         }
-        //should be in model
-        for (int i = 0; i < probeDto.getMovement().length(); i++){
-            if (probeDto.getMovement().charAt(i) == 'L'){
-                optionalProbeModel.get().turnLeft();
-            } else if (probeDto.getMovement().charAt(i) == 'R'){
-                optionalProbeModel.get().turnRight();
-            } else if (probeDto.getMovement().charAt(i) == 'M'){
-                if (!handleMovement(optionalProbeModel.get())){
-                    throw new RuntimeException("There's a obstacle in the path.");
-                }
-            }
-        }
+        optionalProbeModel.get().moveProbe(probeDto.getMovement());
         return save(optionalProbeModel.get());
     }
-
-    //avoid private methods
-    private boolean handleMovement(ProbeModel probeModel) {
-
-        if (!validateProbePosXPosY(probeModel, probeModel.getPositionX(), probeModel.getPositionY())){
-            return false;
-        }
-        switch (probeModel.getDirection()){
-            case NORTH ->  moveProbeNorth(probeModel);
-            case SOUTH ->  moveProbeSouth(probeModel);
-            case EAST ->  moveProbeEast(probeModel);
-            case WEST ->  moveProbeWest(probeModel);
-        }
-        return true;
-    }
-
-    private boolean validateProbeCreationPosXPosY(ProbeModel probeModel, int posX, int posY) {
-        List<ProbeModel> probesList = probeModel.getPlanet().getProbes();
-
-        for (ProbeModel probe : probesList){
-            if (posX == probe.getPositionX() && posY == probe.getPositionY()){
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private boolean validateProbePosXPosY(ProbeModel probeModel, int posX, int posY) {
-        List<ProbeModel> probesList = probeModel.getPlanet().getProbes();
-
-        for (ProbeModel probe : probesList){
-            if ((probe != probeModel) && posX == probe.getPositionX() && posY == probe.getPositionY()){
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private void moveProbeWest(ProbeModel probeModel) {
-        if (probeModel.getPositionX() == 0){
-            probeModel.changePositionX(probeModel.getPlanet().getSizeX());
-        } else {
-            probeModel.decreasePositionX();
-        }
-    }
-
-    private void moveProbeEast(ProbeModel probeModel) {
-        if (probeModel.getPositionX() == probeModel.getPlanet().getSizeX()){
-            probeModel.changePositionX(0);
-        } else {
-            probeModel.increasePositionX();
-        }
-    }
-
-    private void moveProbeSouth(ProbeModel probeModel) {
-        if (probeModel.getPositionY() == 0){
-            probeModel.changePositionY(probeModel.getPlanet().getSizeY());
-        } else {
-            probeModel.decreasePositionY();
-        }
-    }
-
-    private void moveProbeNorth(ProbeModel probeModel) {
-        if (probeModel.getPositionY() == probeModel.getPlanet().getSizeY()){
-            probeModel.changePositionY(0);
-        } else {
-            probeModel.increasePositionY();
-        }
-    }
-
 }

@@ -1,11 +1,9 @@
 package com.api.sondamarte.models;
 
-
 import com.api.sondamarte.enums.ProbeDirection;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.*;
-import java.util.Objects;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -101,4 +99,84 @@ public class ProbeModel {
         positionY += 1;
     }
 
+    public void moveProbe(String movement){
+        for (int i = 0; i < movement.length(); i++){
+            if (movement.charAt(i) == 'L'){
+                turnLeft();
+            } else if (movement.charAt(i) == 'R'){
+                turnRight();
+            } else if (movement.charAt(i) == 'M'){
+                if (!handleMovement()){
+                    throw new RuntimeException("There's a obstacle in the path.");
+                }
+            }
+        }
+    }
+
+    public boolean handleMovement() {
+
+        if (!validateProbePosXPosY(getPositionX(), getPositionY())){
+            return false;
+        }
+        switch (getDirection()){
+            case NORTH ->  moveNorth();
+            case SOUTH ->  moveSouth();
+            case EAST ->  moveEast();
+            case WEST ->  moveWest();
+        }
+        return true;
+    }
+//    public boolean validateProbeCreationPosXPosY(int posX, int posY) {
+//        List<ProbeModel> probesList = getPlanet().getProbes();
+//
+//        for (ProbeModel probe : probesList){
+//            if (posX == probe.getPositionX() && posY == probe.getPositionY()){
+//                return false;
+//            }
+//        }
+//        return true;
+//    }
+
+    public boolean validateProbePosXPosY(int posX, int posY) {
+        List<ProbeModel> probesList = getPlanet().getProbes();
+
+        for (ProbeModel probe : probesList){
+            if (!(probe.getName().equals(getName())) && posX == probe.getPositionX() && posY == probe.getPositionY()){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void moveWest() {
+        if (getPositionX() == 0){
+            changePositionX(getPlanet().getSizeX());
+        } else {
+            decreasePositionX();
+        }
+    }
+
+    public void moveEast() {
+        if (getPositionX() == getPlanet().getSizeX()){
+            changePositionX(0);
+        } else {
+            increasePositionX();
+        }
+    }
+
+    public void moveSouth() {
+        if (getPositionY() == 0){
+            changePositionY(getPlanet().getSizeY());
+        } else {
+            decreasePositionY();
+        }
+    }
+
+    public void moveNorth() {
+        if (getPositionY() == getPlanet().getSizeY()){
+            changePositionY(0);
+        } else {
+            increasePositionY();
+        }
+    }
 }
