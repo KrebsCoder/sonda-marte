@@ -72,8 +72,12 @@ public class ProbeModel {
         return direction;
     }
 
-    public void changeDirection(ProbeModel probeModel, ProbeDirection direction) {
-        this.direction = direction;
+    public void turnLeft(){
+        this.direction = direction.left();
+    }
+
+    public void turnRight(){
+        this.direction = direction.right();
     }
 
     public void changePositionY(int positionY) {
@@ -96,4 +100,5 @@ public class ProbeModel {
     public void increasePositionY() {
         positionY += 1;
     }
+
 }
