@@ -2,12 +2,10 @@ package com.api.sondamarte.services;
 
 import com.api.sondamarte.dtos.PlanetDto;
 import com.api.sondamarte.models.PlanetModel;
+import com.api.sondamarte.models.ProbeModel;
 import com.api.sondamarte.repositories.PlanetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
@@ -51,25 +49,27 @@ public class PlanetService {
 
     @Transactional
     public PlanetModel deleteByName(String name) {
-        Optional<PlanetModel> planetModelOptional = planetRepository.findByName(name);
-        if (planetModelOptional.isEmpty()){
-            throw new RuntimeException("Planet not found.");
-        }
-        planetRepository.delete(planetModelOptional.get());
-        return planetModelOptional.get();
+        PlanetModel planetModel = findPlanetByName(name);
+        planetRepository.deleteByName(name);
+        return planetModel;
     }
 
     @Transactional
     public PlanetModel changePlanetName(String name, PlanetDto planetDto) {
-        Optional<PlanetModel> optionalPlanetModel = planetRepository.findByName(name);
-        if (optionalPlanetModel.isEmpty()){
+        PlanetModel planet = findPlanetByName(name);
+        PlanetModel planetModel = new PlanetModel(
+                planet.getId(),
+                planetDto.getName(),
+                planet.getSizeX(),
+                planet.getSizeY());
+        return planetRepository.save(planetModel);
+    }
+
+    public PlanetModel findPlanetByName(String name) {
+        Optional<PlanetModel> planet = planetRepository.findByName(name);
+        if (planet.isEmpty()){
             throw new RuntimeException("Planet not found.");
         }
-        PlanetModel planetModel = new PlanetModel(
-                optionalPlanetModel.get().getId(),
-                planetDto.getName(),
-                optionalPlanetModel.get().getSizeX(),
-                optionalPlanetModel.get().getSizeY());
-        return planetRepository.save(planetModel);
+        return planet.get();
     }
 }
