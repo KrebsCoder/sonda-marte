@@ -17,50 +17,36 @@ public class ProbeService {
     ProbeRepository probeRepository;
     PlanetRepository planetRepository;
 
+    PlanetService planetService;
+
     @Autowired
-    public ProbeService(ProbeRepository probeRepository, PlanetRepository planetRepository) {
+    public ProbeService(ProbeRepository probeRepository, PlanetRepository planetRepository, PlanetService planetService) {
         this.probeRepository = probeRepository;
         this.planetRepository = planetRepository;
+        this.planetService = planetService;
     }
 
     public ProbeModel createProbe(ProbeDto probeDto){
-        Optional<PlanetModel> optionalPlanetModel = planetRepository.findByName(probeDto.getPlanetName());
-        // !validateProbeCreation(probeDto, optionalPlanetModel.get()) ||
-        if (optionalPlanetModel.isEmpty() ||  !validateProbeName(probeDto.getName())){
-            throw new RuntimeException("Invalid information on probe creation.");
-        }
-        var probeModel = new ProbeModel(
+        PlanetModel planet = planetService.findPlanetByName(probeDto.getPlanetName());
+        ProbeModel probe = findProbeByName(probeDto.getName());
+        probe.validateProbeCreationPosXPosY(probeDto);
+
+        ProbeModel probeModel = new ProbeModel(
                 probeDto.getName(),
                 probeDto.getStartPositionX(),
                 probeDto.getStartPositionY(),
                 probeDto.getFacingPosition(),
-                optionalPlanetModel.get());
+                planet);
         return save(probeModel);
     }
 
-//    private boolean validateProbeCreation(ProbeDto probeDto, PlanetModel planet) {
-//        int posY = probeDto.getStartPositionY();
-//        int posX = probeDto.getStartPositionX();
-//        List<ProbeModel> probeModelList = planet.getProbes();
-//
-//        for (ProbeModel probe : probeModelList){
-//            if (!validateProbeCreationPosXPosY(probe, posX, posY)){
-//                return false;
-//            }
-//        }
-//        if ((posY > planet.getSizeY() || posY < 0) || (posX > planet.getSizeX() || posX < 0)){
-//            return false;
-//        }
-//        return true;
-//    }
-    private boolean validateProbeName(String name) {
+    public ProbeModel findProbeByName(String name) {
         Optional<ProbeModel> probe = probeRepository.findByName(name);
-        if (probe.isPresent()){
-            return false;
+        if (probe.isEmpty()){
+            throw new RuntimeException("Probe not found.");
         }
-        return true;
+        return probe.get();
     }
-
 
     @Transactional
     public ProbeModel save(ProbeModel probe) {
@@ -69,56 +55,38 @@ public class ProbeService {
 
     public List<ProbeModel> findAll() {
         Optional<List<ProbeModel>> optionalProbeModelList = Optional.of(probeRepository.findAll());
+
         if (optionalProbeModelList.get().isEmpty()){
             throw new RuntimeException("Probe not found.");
         }
         return optionalProbeModelList.get();
     }
-    public ProbeModel findByName(String name) {
-        Optional<ProbeModel> probeModelOptional = probeRepository.findByName(name);
-        if (probeModelOptional.isEmpty()){
-            throw new RuntimeException("Probe not found.");
-        }
-        return probeModelOptional.get();
-    }
 
     @Transactional
     public ProbeModel deleteByName(String name) {
-        Optional<ProbeModel> probe = probeRepository.findByName(name);
-        if (probe.isEmpty()){
-            throw new RuntimeException("Probe not found.");
-        }
+        ProbeModel probe = findProbeByName(name);
         probeRepository.deleteByName(name);
-        return probe.get();
+        return probe;
     }
 
     public ProbeModel changeProbeName(String name, ProbeDto probeDto) {
-        Optional<ProbeModel> optionalProbeModel = probeRepository.findByName(name);
-        Optional<PlanetModel> optionalPlanetModel = planetRepository.findByName(probeDto.getPlanetName());
-
-        if (optionalProbeModel.isEmpty()){
-            throw new RuntimeException("Probe not found.");
-        } else if (optionalPlanetModel.isEmpty()){
-            throw new RuntimeException("Probe planet not found.");
-        }
+        PlanetModel planet = planetService.findPlanetByName(probeDto.getPlanetName());
+        ProbeModel probe = findProbeByName(name);
 
         var probeModel = new ProbeModel(
-                optionalProbeModel.get().getId(),
+                probe.getId(),
                 probeDto.getName(),
-                optionalProbeModel.get().getPositionX(),
-                optionalProbeModel.get().getPositionY(),
-                optionalProbeModel.get().getDirection().toString(),
-                optionalPlanetModel.get());
+                probe.getPositionX(),
+                probe.getPositionY(),
+                probe.getDirection().toString(),
+                planet);
 
         return save(probeModel);
     }
 
     public ProbeModel changeProbeDirection(ProbeDto probeDto) {
-        Optional<ProbeModel> optionalProbeModel = probeRepository.findByName(probeDto.getName());
-        if (optionalProbeModel.isEmpty()){
-            throw new RuntimeException("Probe not found.");
-        }
-        optionalProbeModel.get().moveProbe(probeDto.getMovement());
-        return save(optionalProbeModel.get());
+        ProbeModel probe = findProbeByName(probeDto.getName());
+        probe.moveProbe(probeDto.getMovement());
+        return save(probe);
     }
 }
