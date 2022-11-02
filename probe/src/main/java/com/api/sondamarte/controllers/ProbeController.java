@@ -38,10 +38,6 @@ public class ProbeController {
         return ResponseEntity.status(HttpStatus.OK).body(probeService.findAll());
     }
 
-    @DeleteMapping
-    public ResponseEntity<Object> deleteAllProbes(){
-        return ResponseEntity.status(HttpStatus.OK).body(probeService.deleteAll());
-    }
 
     @DeleteMapping("/{name}")
     public ResponseEntity<Object> deleteProbeByName(@PathVariable(value = "name") String name){

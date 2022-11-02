@@ -34,11 +34,6 @@ public class PlanetController {
         return ResponseEntity.status(HttpStatus.OK).body(planetService.findByName(name));
     }
 
-    @DeleteMapping
-    public ResponseEntity<Object> deleteAllPlanets(){
-        return ResponseEntity.status(HttpStatus.OK).body(planetService.deleteAll());
-    }
-
     @DeleteMapping("/{name}")
     public ResponseEntity<Object> deletePlanetByName(@PathVariable(value = "name") String name){
         return ResponseEntity.status(HttpStatus.OK).body(planetService.deleteByName(name));
