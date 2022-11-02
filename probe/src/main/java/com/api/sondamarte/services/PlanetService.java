@@ -22,13 +22,13 @@ public class PlanetService {
         this.planetRepository = planetRepository;
     }
 
-    public ResponseEntity<Object> createPlanet(PlanetDto planetDto){
+    public PlanetModel createPlanet(PlanetDto planetDto){
         Optional<PlanetModel> planet = planetRepository.findByName(planetDto.getName());
         if (planet.isPresent()){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Planet already exists.");
+            throw new RuntimeException("Planet already exists.");
         }
         PlanetModel planetModel = new PlanetModel(planetDto.getName(), planetDto.getSizeX(), planetDto.getSizeY());
-        return ResponseEntity.status(HttpStatus.OK).body(save(planetModel));
+        return save(planetModel);
     }
 
     @Transactional
@@ -36,43 +36,43 @@ public class PlanetService {
         return planetRepository.save(planetModel);
     }
 
-    public ResponseEntity<Object> findAll() {
+    public List<PlanetModel> findAll() {
         Optional<List<PlanetModel>> planetModelOptional = Optional.of(planetRepository.findAll());
         if (planetModelOptional.get().isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Planet not found.");
+            throw new RuntimeException("Planet not found.");
         }
-        return ResponseEntity.status(HttpStatus.OK).body(planetModelOptional.get());
+        return planetModelOptional.get();
     }
 
-    public ResponseEntity<Object> findByName(String name) {
+    public PlanetModel findByName(String name) {
         Optional<PlanetModel> planetModelOptional = planetRepository.findByName(name);
         if (planetModelOptional.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Planet not found.");
+            throw new RuntimeException("Planet not found.");
         }
-        return ResponseEntity.status(HttpStatus.OK).body(planetModelOptional.get());
+        return planetModelOptional.get();
     }
 
 
-    public ResponseEntity<Object> deleteByName(String name) {
+    public String deleteByName(String name) {
         Optional<PlanetModel> planetModelOptional = planetRepository.findByName(name);
         if (planetModelOptional.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Planet not found.");
+            throw new RuntimeException("Planet not found.");
         }
         planetRepository.delete(planetModelOptional.get());
-        return ResponseEntity.status(HttpStatus.OK).body("All planets were deleted.");
+        return "Planet deleted.";
     }
 
     @Transactional
-    public ResponseEntity<Object> changePlanetName(String name, PlanetDto planetDto) {
+    public PlanetModel changePlanetName(String name, PlanetDto planetDto) {
         Optional<PlanetModel> optionalPlanetModel = planetRepository.findByName(name);
         if (optionalPlanetModel.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Planet not found.");
+            throw new RuntimeException("Planet not found.");
         }
         var planetModel = new PlanetModel(
                 optionalPlanetModel.get().getId(),
                 planetDto.getName(),
                 planetDto.getSizeX(),
                 planetDto.getSizeY());
-        return ResponseEntity.status(HttpStatus.CREATED).body(save(planetModel));
+        return save(planetModel);
     }
 }
