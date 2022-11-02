@@ -53,15 +53,6 @@ public class PlanetService {
     }
 
 
-    @Transactional
-    public List<PlanetModel> deleteAll() {
-        List<PlanetModel> Planets = planetRepository.findAll();
-        for (PlanetModel planet : Planets){
-            planetRepository.deleteByName(planet.getName());
-        }
-        return Planets;
-    }
-
     public ResponseEntity<Object> deleteByName(String name) {
         Optional<PlanetModel> planetModelOptional = planetRepository.findByName(name);
         if (planetModelOptional.isEmpty()){

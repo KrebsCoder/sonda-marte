@@ -86,18 +86,6 @@ public class ProbeService {
     }
 
     @Transactional
-    public ResponseEntity<Object> deleteAll() {
-        List<ProbeModel> probes = probeRepository.findAll();
-        if (probes.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Probe not found.");
-        }
-        for (ProbeModel probe : probes){
-            probeRepository.deleteByName(probe.getName());
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(probes);
-    }
-
-    @Transactional
     public ResponseEntity<Object> deleteByName(String name) {
         Optional<ProbeModel> probe = probeRepository.findByName(name);
         if (probe.isEmpty()){
