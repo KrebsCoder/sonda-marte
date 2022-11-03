@@ -2,11 +2,7 @@ package com.api.sondamarte.models;
 
 import com.api.sondamarte.dtos.ProbeDto;
 import com.api.sondamarte.enums.ProbeDirection;
-import com.api.sondamarte.repositories.ProbeRepository;
-import com.api.sondamarte.services.ProbeService;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
@@ -134,7 +130,7 @@ public class ProbeModel {
             }
         }
     }
-    
+
     public void validateProbeCreationPosXPosY(ProbeDto probeDto) {
         List<ProbeModel> probesList = getPlanet().getProbes();
 

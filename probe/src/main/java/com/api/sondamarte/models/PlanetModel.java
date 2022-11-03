@@ -15,7 +15,7 @@ public class PlanetModel {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID Id;
-    @Column(length = 255)
+    @Column(nullable = false)
     private String name;
     @Column(nullable = false)
     private int sizeX;
@@ -25,7 +25,6 @@ public class PlanetModel {
     @OneToMany(mappedBy = "planet", cascade = CascadeType.ALL)
     @JsonIgnore
     private final List<ProbeModel> probes = new ArrayList<>();
-
 
     public PlanetModel(String name, int sizeX, int sizeY) {
         this.name = name;

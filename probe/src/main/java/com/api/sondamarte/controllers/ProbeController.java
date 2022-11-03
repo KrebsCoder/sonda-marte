@@ -2,15 +2,11 @@ package com.api.sondamarte.controllers;
 
 
 import com.api.sondamarte.dtos.ProbeDto;
-import com.api.sondamarte.models.PlanetModel;
-import com.api.sondamarte.models.ProbeModel;
 import com.api.sondamarte.services.ProbeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
-import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -30,14 +26,13 @@ public class ProbeController {
 
     @GetMapping("/{name}")
     public ResponseEntity<Object> getProbeByName(@PathVariable(value = "name") String name){
-        return ResponseEntity.status(HttpStatus.OK).body(probeService.findByName(name));
+        return ResponseEntity.status(HttpStatus.OK).body(probeService.findProbeByName(name));
     }
 
     @GetMapping
     public ResponseEntity<Object> getAllProbes(){
         return ResponseEntity.status(HttpStatus.OK).body(probeService.findAll());
     }
-
 
     @DeleteMapping("/{name}")
     public ResponseEntity<Object> deleteProbeByName(@PathVariable(value = "name") String name){
