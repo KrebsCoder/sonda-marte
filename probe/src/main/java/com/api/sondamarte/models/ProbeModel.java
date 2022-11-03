@@ -81,7 +81,6 @@ public class ProbeModel {
         this.positionY = move.getY();
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -112,16 +111,29 @@ public class ProbeModel {
     }
 
     public void handleMovement() {
-        validateProbePosXPosY(getPositionX(), getPositionY());
+        validatePathForObstacles(getPositionX(), getPositionY());
 
         switch (getDirection()) {
             case NORTH, SOUTH ->  move(direction.getNextY(positionX, positionY));
             case EAST, WEST ->  move(direction.getNextX(positionX, positionY));
-            default -> throw new RuntimeException("Not a valid direction");
+        }
+        validateProbeNewPosition();
+    }
+
+    // This methods make sure the Probe never goes out of bounds from the planet size
+    public void validateProbeNewPosition() {
+        if (getPositionY() > getPlanet().getSizeY() && getDirection().equals(ProbeDirection.NORTH)){
+            move(direction.getNextY(getPositionX(), 0));
+        } else if (getPositionY() == 0 && getDirection().equals(ProbeDirection.SOUTH)){
+            move(direction.getNextY(getPositionX(), getPlanet().getSizeY() + 1));
+        } else if (getPositionX() == 0 && getDirection().equals(ProbeDirection.WEST)){
+            move(direction.getNextX(getPlanet().getSizeX() + 1, getPositionY()));
+        } else if (getPositionX() > getPlanet().getSizeX() && getDirection().equals(ProbeDirection.EAST)){
+            move(direction.getNextX(0, getPositionY()));
         }
     }
 
-    public void validateProbePosXPosY(int posX, int posY) {
+    public void validatePathForObstacles(int posX, int posY) {
         List<ProbeModel> probesList = getPlanet().getProbes();
 
         for (ProbeModel probe : probesList){

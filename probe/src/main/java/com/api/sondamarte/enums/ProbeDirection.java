@@ -15,7 +15,7 @@ public enum ProbeDirection {
 
         @Override
         public Move getNextX(int X, int Y) {
-            return null;
+            return new Move(X, Y);
         }
 
         @Override
@@ -36,7 +36,7 @@ public enum ProbeDirection {
 
         @Override
         public Move getNextX(int X, int Y) {
-            return null;
+            return new Move(X, Y);
         }
 
 
@@ -63,7 +63,7 @@ public enum ProbeDirection {
 
         @Override
         public Move getNextY(int X, int Y) {
-            return null;
+            return new Move(X, Y);
         }
     },
     EAST{
@@ -84,11 +84,12 @@ public enum ProbeDirection {
 
         @Override
         public Move getNextY(int X, int Y) {
-            return null;
+            return new Move(X, Y);
         }
     };
 
     public abstract ProbeDirection right();
+
     public abstract ProbeDirection left();
 
     public abstract Move getNextX(int X, int Y);
