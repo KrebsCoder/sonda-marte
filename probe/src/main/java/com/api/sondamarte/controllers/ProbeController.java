@@ -1,6 +1,5 @@
 package com.api.sondamarte.controllers;
 
-
 import com.api.sondamarte.dtos.ProbeDto;
 import com.api.sondamarte.services.ProbeService;
 import org.springframework.http.HttpStatus;

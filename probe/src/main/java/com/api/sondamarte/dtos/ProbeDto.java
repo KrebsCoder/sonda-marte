@@ -16,7 +16,6 @@ public class ProbeDto {
 
     private String movement;
 
-
     public String getName() {
         return name;
     }

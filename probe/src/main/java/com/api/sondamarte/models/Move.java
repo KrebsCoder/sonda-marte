@@ -1,9 +1,9 @@
 package com.api.sondamarte.models;
 
 public class Move {
-    private int x;
+    private final int x;
 
-    private int y;
+    private final int y;
 
     public Move(int x, int y) {
         this.x = x;
