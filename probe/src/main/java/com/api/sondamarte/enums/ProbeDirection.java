@@ -1,5 +1,7 @@
 package com.api.sondamarte.enums;
 
+import com.api.sondamarte.models.Move;
+
 public enum ProbeDirection {
     NORTH{
         @Override
@@ -9,6 +11,16 @@ public enum ProbeDirection {
         @Override
         public  ProbeDirection left(){
             return WEST;
+        }
+
+        @Override
+        public Move getNextX(int X, int Y) {
+            return null;
+        }
+
+        @Override
+        public Move getNextY(int X, int Y) {
+            return new Move(X, (Y + 1));
         }
     },
     SOUTH{
@@ -21,6 +33,17 @@ public enum ProbeDirection {
         public ProbeDirection left() {
             return EAST;
         }
+
+        @Override
+        public Move getNextX(int X, int Y) {
+            return null;
+        }
+
+
+        @Override
+        public Move getNextY(int X, int Y) {
+            return new Move(X, (Y - 1));
+        }
     },
     WEST{
         @Override
@@ -31,6 +54,16 @@ public enum ProbeDirection {
         @Override
         public ProbeDirection left() {
             return SOUTH;
+        }
+
+        @Override
+        public Move getNextX(int X, int Y) {
+            return new Move((X - 1), Y);
+        }
+
+        @Override
+        public Move getNextY(int X, int Y) {
+            return null;
         }
     },
     EAST{
@@ -43,8 +76,22 @@ public enum ProbeDirection {
         public ProbeDirection left() {
             return NORTH;
         }
+
+        @Override
+        public Move getNextX(int X, int Y) {
+            return new Move((X + 1), Y);
+        }
+
+        @Override
+        public Move getNextY(int X, int Y) {
+            return null;
+        }
     };
 
     public abstract ProbeDirection right();
     public abstract ProbeDirection left();
+
+    public abstract Move getNextX(int X, int Y);
+
+    public abstract Move getNextY(int X, int Y);
 }
