@@ -2,7 +2,6 @@ package com.api.sondamarte.services;
 
 import com.api.sondamarte.dtos.PlanetDto;
 import com.api.sondamarte.models.PlanetModel;
-import com.api.sondamarte.models.ProbeModel;
 import com.api.sondamarte.repositories.PlanetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,15 +36,6 @@ public class PlanetService {
         }
         return planetModelOptional.get();
     }
-
-    public PlanetModel findByName(String name) {
-        Optional<PlanetModel> planetModelOptional = planetRepository.findByName(name);
-        if (planetModelOptional.isEmpty()){
-            throw new RuntimeException("Planet not found.");
-        }
-        return planetModelOptional.get();
-    }
-
 
     @Transactional
     public PlanetModel deleteByName(String name) {

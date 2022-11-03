@@ -31,7 +31,7 @@ public class PlanetController {
 
     @GetMapping("/{name}")
     public ResponseEntity<Object> getPlanetByName(@PathVariable(value = "name") String name){
-        return ResponseEntity.status(HttpStatus.OK).body(planetService.findByName(name));
+        return ResponseEntity.status(HttpStatus.OK).body(planetService.findPlanetByName(name));
     }
 
     @DeleteMapping("/{name}")
