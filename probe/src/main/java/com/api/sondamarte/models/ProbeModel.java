@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -79,32 +80,27 @@ public class ProbeModel {
         this.direction = direction.left();
     }
 
+    public void move(Move move){
+        this.positionX = move.getX();
+        this.positionY = move.getY();
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ProbeModel that = (ProbeModel) o;
+        return positionX == that.positionX && positionY == that.positionY && Objects.equals(id, that.id) && Objects.equals(name, that.name) && direction == that.direction && Objects.equals(planet, that.planet);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, positionX, positionY, direction, planet);
+    }
+
     public void turnRight(){
         this.direction = direction.right();
-    }
-
-    public void changePositionY(int positionY) {
-        this.positionY = positionY;
-    }
-
-    public void changePositionX(int positionX) {
-        this.positionX = positionX;
-    }
-
-    public void decreasePositionX() {
-        positionX -= 1;
-    }
-
-    public void increasePositionX() {
-        positionX += 1;
-    }
-
-    public void decreasePositionY() {
-        positionY -= 1;
-    }
-
-    public void increasePositionY() {
-        positionY += 1;
     }
 
     public void moveProbe(String movement){
@@ -122,21 +118,10 @@ public class ProbeModel {
     public void handleMovement() {
         validateProbePosXPosY(getPositionX(), getPositionY());
 
-        switch (getDirection()){
-            case NORTH ->  moveNorth();
-            case SOUTH ->  moveSouth();
-            case EAST ->  moveEast();
-            case WEST ->  moveWest();
-            // default:
-        }
-    }
-    public void validateProbeCreationPosXPosY(ProbeDto probeDto) {
-        List<ProbeModel> probesList = getPlanet().getProbes();
-
-        for (ProbeModel probe : probesList){
-            if (probeDto.getStartPositionX() == probe.getPositionX() && probeDto.getStartPositionY() == probe.getPositionY()){
-                throw new RuntimeException("There's a probe on the creation position.");
-            }
+        switch (getDirection()) {
+            case NORTH, SOUTH ->  move(direction.getNextY(positionX, positionY));
+            case EAST, WEST ->  move(direction.getNextX(positionX, positionY));
+            default -> throw new RuntimeException("Not a valid direction");
         }
     }
 
@@ -144,41 +129,19 @@ public class ProbeModel {
         List<ProbeModel> probesList = getPlanet().getProbes();
 
         for (ProbeModel probe : probesList){
-            if (!(probe.getName().equals(getName())) && posX == probe.getPositionX() && posY == probe.getPositionY()){
+            if (!(probe.getName().equals(getName()) && posX == probe.getPositionX() && posY == probe.getPositionY())){
                 throw new RuntimeException("There's a obstacle in the path.");
             }
         }
     }
+    
+    public void validateProbeCreationPosXPosY(ProbeDto probeDto) {
+        List<ProbeModel> probesList = getPlanet().getProbes();
 
-    public void moveWest() {
-        if (getPositionX() == 0){
-            changePositionX(getPlanet().getSizeX());
-        } else {
-            decreasePositionX();
-        }
-    }
-
-    public void moveEast() {
-        if (getPositionX() == getPlanet().getSizeX()){
-            changePositionX(0);
-        } else {
-            increasePositionX();
-        }
-    }
-
-    public void moveSouth() {
-        if (getPositionY() == 0){
-            changePositionY(getPlanet().getSizeY());
-        } else {
-            decreasePositionY();
-        }
-    }
-
-    public void moveNorth() {
-        if (getPositionY() == getPlanet().getSizeY()){
-            changePositionY(0);
-        } else {
-            increasePositionY();
+        for (ProbeModel probe : probesList){
+            if (probeDto.getStartPositionX() == probe.getPositionX() && probeDto.getStartPositionY() == probe.getPositionY()){
+                throw new RuntimeException("There's a probe on the creation position.");
+            }
         }
     }
 }
