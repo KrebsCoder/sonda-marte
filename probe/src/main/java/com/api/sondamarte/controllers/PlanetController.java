@@ -5,7 +5,6 @@ import com.api.sondamarte.services.PlanetService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import javax.validation.Valid;
 
 @RestController
@@ -31,12 +30,7 @@ public class PlanetController {
 
     @GetMapping("/{name}")
     public ResponseEntity<Object> getPlanetByName(@PathVariable(value = "name") String name){
-        return ResponseEntity.status(HttpStatus.OK).body(planetService.findByName(name));
-    }
-
-    @DeleteMapping
-    public ResponseEntity<Object> deleteAllPlanets(){
-        return ResponseEntity.status(HttpStatus.OK).body(planetService.deleteAll());
+        return ResponseEntity.status(HttpStatus.OK).body(planetService.findPlanetByName(name));
     }
 
     @DeleteMapping("/{name}")

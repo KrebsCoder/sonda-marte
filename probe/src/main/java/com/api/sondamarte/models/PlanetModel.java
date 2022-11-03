@@ -1,11 +1,9 @@
 package com.api.sondamarte.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -15,7 +13,7 @@ public class PlanetModel {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID Id;
-    @Column(length = 255)
+    @Column(nullable = false)
     private String name;
     @Column(nullable = false)
     private int sizeX;
@@ -25,7 +23,6 @@ public class PlanetModel {
     @OneToMany(mappedBy = "planet", cascade = CascadeType.ALL)
     @JsonIgnore
     private final List<ProbeModel> probes = new ArrayList<>();
-
 
     public PlanetModel(String name, int sizeX, int sizeY) {
         this.name = name;

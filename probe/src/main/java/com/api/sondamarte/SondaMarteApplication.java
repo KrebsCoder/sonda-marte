@@ -9,5 +9,4 @@ public class SondaMarteApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(SondaMarteApplication.class, args);
 	}
-
 }

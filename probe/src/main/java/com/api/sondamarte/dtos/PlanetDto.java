@@ -6,9 +6,9 @@ public class PlanetDto {
 
     @NotNull
     private String name;
-    @NotNull
+
     private int sizeX;
-    @NotNull
+
     private int sizeY;
 
     public String getName() {

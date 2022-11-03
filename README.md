@@ -54,18 +54,12 @@ GET http://localhost:8080/planet
 GET http://localhost:8080/planet/name
 ```
 
-- Deletar todos os planetas
-
-```
-DEL http://localhost:8080/planet
-```
-
 - Deletar um planeta específico.
 ```
 DEL http://localhost:8080/planet/name
 ```
 
-- Mudar o nome de um planeta. Obs: coloque o tamanho do planeta
+- Mudar o nome de um planeta.
 
 ```
 PUT http://localhost:8080/planet/name
@@ -73,9 +67,7 @@ PUT http://localhost:8080/planet/name
 
 ```json
 {
-	"name": "",
-	"sizeX": 1,
-	"sizeY": 1
+	"name": ""
 }
 ```
 
@@ -111,7 +103,7 @@ PUT http://localhost:8080/probe/move
 }
 ```
 
-- Mudar o nome de uma sonda. Obs: coloque as informações da sonda
+- Mudar o nome de uma sonda. Obs: coloque o nome do planeta
 
 ```
 PUT http://localhost:8080/probe/name
@@ -120,9 +112,6 @@ PUT http://localhost:8080/probe/name
 ```json
 {
 	"name": "Sonda",
-	"startPositionX": 3,
-	"startPositionY": 4,
-	"facingPosition": "NORTH",
 	"planetName": "Marte"
 }
 ```
@@ -136,12 +125,6 @@ GET http://localhost:8080/probe
 - Ver o nome de uma sonda específica.
 ```
 GET http://localhost:8080/probe/name
-```
-
-- Deletar todas as sondas
-
-```
-DEL http://localhost:8080/probe
 ```
 
 - Deletar uma sonda específica.
