@@ -3,7 +3,6 @@ package com.api.sondamarte.services;
 import com.api.sondamarte.dtos.ProbeDto;
 import com.api.sondamarte.models.PlanetModel;
 import com.api.sondamarte.models.ProbeModel;
-import com.api.sondamarte.repositories.PlanetRepository;
 import com.api.sondamarte.repositories.ProbeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,14 +15,11 @@ public class ProbeService {
 
     ProbeRepository probeRepository;
 
-    PlanetRepository planetRepository;
-
     PlanetService planetService;
 
     @Autowired
-    public ProbeService(ProbeRepository probeRepository, PlanetRepository planetRepository, PlanetService planetService) {
+    public ProbeService(ProbeRepository probeRepository, PlanetService planetService) {
         this.probeRepository = probeRepository;
-        this.planetRepository = planetRepository;
         this.planetService = planetService;
     }
 

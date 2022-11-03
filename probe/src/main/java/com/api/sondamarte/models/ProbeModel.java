@@ -120,7 +120,7 @@ public class ProbeModel {
         validateProbeNewPosition();
     }
 
-    // This methods make sure the Probe never goes out of bounds from the planet size
+    // This method make sure the Probe never goes out of bounds from the planet size
     public void validateProbeNewPosition() {
         if (getPositionY() > getPlanet().getSizeY() && getDirection().equals(ProbeDirection.NORTH)){
             move(direction.getNextY(getPositionX(), 0));
@@ -138,7 +138,7 @@ public class ProbeModel {
 
         for (ProbeModel probe : probesList){
             if (!(probe.getName().equals(getName()) && posX == probe.getPositionX() && posY == probe.getPositionY())){
-                throw new RuntimeException("There's a obstacle in the path.");
+                throw new RuntimeException("There's an obstacle on the path.");
             }
         }
     }
