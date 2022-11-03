@@ -28,20 +28,24 @@ public class ProbeService {
 
     public ProbeModel createProbe(ProbeDto probeDto){
         PlanetModel planet = planetService.findPlanetByName(probeDto.getPlanetName());
-        ProbeModel probe = findProbeByName(probeDto.getName());
-        probe.validateProbeCreationPosXPosY(probeDto);
+        Optional<ProbeModel> probe = probeRepository.findByName(probeDto.getName());
 
+        if (probe.isPresent()){
+            throw new RuntimeException("Probe already exists.");
+        }
         ProbeModel probeModel = new ProbeModel(
                 probeDto.getName(),
                 probeDto.getStartPositionX(),
                 probeDto.getStartPositionY(),
                 probeDto.getFacingPosition(),
                 planet);
+        probeModel.validateProbeCreationPosXPosY(probeDto);
         return save(probeModel);
     }
 
     public ProbeModel findProbeByName(String name) {
         Optional<ProbeModel> probe = probeRepository.findByName(name);
+
         if (probe.isEmpty()){
             throw new RuntimeException("Probe not found.");
         }
@@ -65,6 +69,7 @@ public class ProbeService {
     @Transactional
     public ProbeModel deleteByName(String name) {
         ProbeModel probe = findProbeByName(name);
+
         probeRepository.deleteByName(name);
         return probe;
     }
@@ -80,13 +85,13 @@ public class ProbeService {
                 probe.getPositionY(),
                 probe.getDirection().toString(),
                 planet);
-
         return save(probeModel);
     }
 
     public ProbeModel changeProbeDirection(ProbeDto probeDto) {
         ProbeModel probe = findProbeByName(probeDto.getName());
-        probe.moveProbe(probeDto.getMovement());
+
+        probe.moveProbe(probeDto.getMovement());;
         return save(probe);
     }
 }
