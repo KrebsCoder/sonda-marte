@@ -2,6 +2,7 @@ package com.api.sondamarte.controllers;
 
 import com.api.sondamarte.dtos.ProbeDto;
 import com.api.sondamarte.services.ProbeService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +14,7 @@ import javax.validation.Valid;
 public class ProbeController {
 
     final ProbeService probeService;
-
+    @Autowired
     public ProbeController(ProbeService probeService) {
         this.probeService = probeService;
     }
